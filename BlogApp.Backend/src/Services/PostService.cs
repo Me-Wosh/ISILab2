@@ -1,5 +1,6 @@
 using BlogApp.Persistence;
 using BlogApp.Persistence.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogApp.Services;
 
@@ -19,5 +20,15 @@ public class PostService(BlogAppDbContext dbContext)
         await dbContext.Posts.AddAsync(post, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         return post.Id;
+    }
+
+    public async Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken cancellationToken)
+    {
+        return await dbContext.Posts.ToListAsync(cancellationToken);
+    }
+
+    public async Task<Post?> GetPostByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        return await dbContext.Posts.FindAsync([id], cancellationToken);
     }
 }

@@ -1,0 +1,28 @@
+<h1>Posts List</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Content</th>
+      <th>Author ID</th>
+      <th>Created At</th>
+      <th>Published At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (post of posts(); track post.id) {
+      <tr>
+        <td>{{ post.title }}</td>
+        <td>{{ post.content }}</td>
+        <td>{{ post.authorId }}</td>
+        <td>{{ post.createdAt | date: 'medium' }}</td>
+        <td>{{ post.publishedAt | date: 'medium' }}</td>
+        <td>
+          <button (click)="viewPost(post.id)">Details</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

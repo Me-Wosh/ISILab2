@@ -1,4 +1,5 @@
 using BlogApp.Persistence;
+using BlogApp.Persistence.Models;
 using BlogApp.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,20 @@ builder.Services.AddDbContext<BlogAppDbContext>(options =>
 
 builder.Services.AddScoped<PostService>();
 
+builder.Services.AddCors(options =>
+{
+   options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }); 
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 var group = app.MapGroup("/api")
     .DisableAntiforgery();
@@ -25,6 +39,21 @@ group.MapPost("/posts", async Task<Created<int>> (
 {
     var id = await postService.CreatePostAsync(request, cancellationToken);
     return TypedResults.Created($"/api/posts/{id}", id);
+});
+
+group.MapGet("/posts", async Task<Ok<IEnumerable<Post>>> (PostService postService, CancellationToken cancellationToken) =>
+{
+    var posts = await postService.GetAllPostsAsync(cancellationToken);
+    return TypedResults.Ok(posts);
+});
+
+group.MapGet("/posts/{id:int}", async Task<Results<Ok<Post>, NotFound>> (
+    [FromRoute] int id,
+    PostService postService,
+    CancellationToken cancellationToken) =>
+{
+    var post = await postService.GetPostByIdAsync(id, cancellationToken);
+    return post is not null ? TypedResults.Ok(post) : TypedResults.NotFound();
 });
 
 app.Run();

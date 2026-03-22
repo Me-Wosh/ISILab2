@@ -1,0 +1,32 @@
+@let _post = post();
+
+@if (!_post) {
+  <p>Post not found</p>
+} @else {
+  <h1>Post {{ _post.id }} Details</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Content</th>
+        <th>Author ID</th>
+        <th>Created At</th>
+        <th>Published At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ _post.title }}</td>
+        <td>{{ _post.content }}</td>
+        <td>{{ _post.authorId }}</td>
+        <td>{{ _post.createdAt | date:'medium' }}</td>
+        <td>{{ _post.publishedAt | date:'medium' }}</td>
+        <td>
+          <button (click)="goBack()">Go back</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+}
